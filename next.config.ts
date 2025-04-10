@@ -1,7 +1,18 @@
-import type { NextConfig } from "next";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+module.exports = {
+  images: {
+    domains: ["peach-rainy-ape-776.mypinata.cloud", "ipfs.io"],
+  },
+  webpack: (config: { plugins: unknown[] }, {}) => {
+    // Add mini-css-extract-plugin
+    config.plugins.push(
+      new MiniCssExtractPlugin({
+        filename: "[name].css",
+        chunkFilename: "[id].css",
+      })
+    );
+
+    return config;
+  },
 };
-
-export default nextConfig;
