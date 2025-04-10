@@ -25,17 +25,16 @@ const NETWORKS = {
     name: "SOON Mainnet",
     rpcUrl: "https://rpc.mainnet.soo.network/rpc",
     explorerUrl: "https://explorer.soo.network",
-    fee: 0.002, // Fee in SOL
+    fee: 0.002,
   },
   SVM_BNB: {
     name: "svmBNB Mainnet",
     rpcUrl: "https://rpc.svmbnbmainnet.soo.network/rpc",
     explorerUrl: "https://explorer.svmbnbmainnet.soo.network",
-    fee: 0.005, // Fee in SOL
+    fee: 0.005,
   },
 };
 
-// Fee receiver address
 const FEE_RECEIVER = "GdUXESh35ZUPqPtovzfMdFbeMMzjnp5LNYZtikLA9Eqf";
 
 export default function Hero() {
@@ -207,35 +206,28 @@ export default function Hero() {
         .use(mplToolbox())
         .use(walletAdapterIdentity(wallet));
 
-      // Create a mint signer
       const mintSigner = generateSigner(umi);
 
-      // Store mint address for UI display
       setMintAddress(mintSigner.publicKey.toString());
 
-      // Calculate amount (1 billion with the specified decimals)
       const amount = BigInt(tokenSupply) * BigInt(10) ** BigInt(tokenDecimals);
 
-      // Fee payment transaction
       setTransactionProgress(
         `Sending ${selectedNetwork.fee} ${
           selectedNetwork === NETWORKS.SOON ? "ETH" : "BNB"
         } transaction fee...`
       );
 
-      // Parse the fee receiver address
       const feeReceiver = toUmiPublicKey(FEE_RECEIVER);
 
-      // Create fee payment transaction
       const feePaymentTx = transactionBuilder().add(
         transferSol(umi, {
           source: umi.identity,
           destination: feeReceiver,
-          amount: sol(selectedNetwork.fee), // Convert to lamports
+          amount: sol(selectedNetwork.fee),
         })
       );
 
-      // Send fee transaction
       const { signature: feeSignature } = await feePaymentTx.sendAndConfirm(
         umi
       );
@@ -243,7 +235,6 @@ export default function Hero() {
         `Fee payment successful. Signature: ${feeSignature.toString()}`
       );
 
-      // Create token after fee is paid
       setTransactionProgress("Creating token metadata and minting tokens...");
 
       const createTokenTx = transactionBuilder().add(
